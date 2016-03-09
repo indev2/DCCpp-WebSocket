@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DCC++ Mobile Controller</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="jquery.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script type="text/javascript" src="bootstrap-toggle.min.js"></script>
+
+    <style type="text/css">
+        .bg-1 {
+            background-color: #000000;
+            color: #ffffff;
+        }
+        
+        .bg-2 {
+            background-color: #33ccff;
+            color: #000000;
+            font-size:150%;
+        }
+        
+        .bg-3 {
+            background-color: #33ccff;
+            color: #000000;
+            font-size:180%;
+        }
+        
+        .bg-4 {
+            background-color: #bbc3cc;
+            color: #000000;
+            font-size:150%;
+        }
+        
+        .bg-5 {
+            background-color: #afeeee;
+            color: #000000;
+        }
+        
+        .container-fluid {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+    </style>
+    <script type="text/javascript">
+        var ipValue;
+        var connection;
+        connection.onopen = function() {
+            connection.send('ping');
+        };
+        connection.onerror = function(error) {
+            console.log('WebSocket Error ', error);
+        };
+
+        function mod() {
+            var text = document.getElementById('ip').value;
+            ipValue = text;
+            connection = new WebSocket("ws://"+ipValue, ['arduino']);
+
+            console.log("IP value changed to:" + ipValue); <!--Debug - Comment out if not required.-->
+
+        }
+
+        function switch0() {
+            if (document.getElementById('power').checked) {
+                var toSend = "PON";
+                connection.send(toSend);
+
+                console.log("Power On sent:" + toSend); <!--Debug - Comment out if not required.-->	
+
+            } else {
+                var toSend = "RESET";
+                connection.send(toSend);
+
+                console.log("Reset/Power Off sent:" + toSend); <!--Debug - Comment out if not required.-->
+            }
+        }
+
+        function switch1() {
+            if (document.getElementById('DirT1').checked) {
+                var toSend = "FOR";
+                connection.send(toSend);
+
+                console.log("Forward T1 sent:"+ toSend); <!--Debug - Comment out if not required.-->
+
+            } else {
+                var toSend = "REV";
+                connection.send(toSend);
+
+                console.log("Reverse T1 sent:"+ toSend); <!--Debug - Comment out if not required.-->
+            }
+        }
+
+        function switch2() {
+            if (document.getElementById('DirT2').checked) {
+                var toSend = "FOR2";
+                connection.send(toSend);
+
+                console.log("Forward T2 sent:"+ toSend); <!--Debug - Comment out if not required.-->
+
+            } else {
+                var toSend = "REV2";
+                connection.send(toSend);
+
+                console.log("Reverse T2 sent:"+ toSend); <!--Debug - Comment out if not required.-->
+            }
+        }
+
+        function Cabmod1() {
+            var text = document.getElementById('Cab1').value;
+            var toSend = "CAB" + text;
+            connection.send(toSend);
+
+            console.log("Cab# T1 sent:" + toSend); <!--Debug - Comment out if not required.-->
+        }
+
+        function Cabmod2() {
+            var text = document.getElementById('Cab2').value;
+            var toSend = "CAB2" + text;
+            connection.send(toSend);
+
+            console.log("Cab# T2 sent:" + toSend); <!--Debug - Comment out if not required.-->
+        }
+
+        function showValueT1(newValue) {
+            document.getElementById("outputTextT1").value = newValue;
+            connection.send("x" + newValue);
+        }
+
+        function showValueT2(newValue) {
+            document.getElementById("outputTextT2").value = newValue;
+            connection.send("y" + newValue);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid bg-1 text-center">
+        <h3>DCC++ Mobile Controller</h3>
+        <h3>Beta</h3>
+    </div>
+    <div class="container-fluid bg-2 text-center">
+        <div class="row">
+            <div class="col-xs-3"></div>
+            <div class="col-xs-6 center-block">
+                <input type="text" class="form-control" placeholder="Input: Server 'IP:Port'" id="ip" onchange="mod()" style="width:220px;height:40px;">
+            </div
+            <div class="col-xs-3">
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-3 text-center">
+        <div class="row">
+            <div class="col-xs-3">
+                <input type="checkbox" data-toggle="toggle" id="power" name="power" onchange="switch0()" data-size="large" data-onstyle="success" data-offstyle="danger"> POWER
+                <p></p>
+            </div>
+            <div class="col-xs-6">
+                <input type="text" name="Cab1#" placeholder="Cab#" id="Cab1" onchange="Cabmod1()" style="width:80px;height:40px;">
+            </div>
+            <div class="col-xs-3">
+                <input type="checkbox" data-toggle="toggle" id="DirT1" onchange="switch1()" data-size="large" checked data-on="F>>" data-off="R<<" data-offstyle="danger" data-onstyle="success"> DIR<p></p>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-4 text-center">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="container">
+                    <input type="range" id="inputSliderT1" min="0" max="126" value="0" step="1" onchange="showValueT1(this.value)" style="height:40px;">
+                    <input type="text" id="outputTextT1" value="0" style="width:40px;height:30px;">Throttle 1
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-3 text-center">
+        <div class="row">
+            <div class="col-xs-3"></div>
+            <div class="col-xs-6">
+                <input type="text" name="Cab2#" placeholder="Cab#" id="Cab2" onchange="Cabmod2()" style="width:80px;height:40px;">
+            </div>
+            <div class="col-xs-3">
+                <input type="checkbox" data-toggle="toggle" id="DirT2" onchange="switch2()" data-size="large" checked data-on="F>>" data-off="R<<" data-offstyle="danger" data-onstyle="success"> DIR<p></p>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-4 text-center">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="container">
+                    <input type="range" id="inputSliderT2" min="0" max="126" value="0" step="1" onchange="showValueT2(this.value)" style="height:40px;">
+                    <input type="text" id="outputTextT2" value="0" style="width:40px;height:30px;">Throttle 2
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-5 text-center">
+        <div class="row">
+            <div class="col-xs-3">
+                <div class="container-fluid">
+                    <button class="btn btn-default" type="button">F0</button>
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <div class="container-fluid">
+                    <button class="btn btn-default" type="button">F1</button>
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <div class="container-fluid">
+                    <button class="btn btn-default" type="button">F2</button>
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <div class="container-fluid">
+                    <button class="btn btn-default" type="button">F3</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-5 text-center">
+        <div class="row">
+            <div class="col-xs-3">
+                <div class="container-fluid">
+                    <button class="btn btn-default" type="button">Button</button>
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <div class="container-fluid">
+                    <button class="btn btn-default" type="button">Button</button>
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <div class="container-fluid">
+                    <button class="btn btn-default" type="button">Button</button>
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <div class="container-fluid">
+                    <button class="btn btn-default" type="button">Button</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<footer class="container-fluid bg-1 text-center">
+  <p>HTML by S Lowry (indev2) 2016. Licence - Free.</p><!--Libraries - Refer to relevent Developers.--> 
+</footer>
+
+</body>
+
+</html>
