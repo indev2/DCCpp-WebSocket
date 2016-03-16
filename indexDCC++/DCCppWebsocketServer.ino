@@ -31,8 +31,8 @@ String c;
 String d;
 int cInt;
 int dInt;
-const char* ssid     = "BUFFALO 11N";
-const char* password = "j5n3bsifhadft";
+const char* ssid     = "Your SSID";
+const char* password = "Your Password";
 //const int redPin = 15;  //Debug LED function not needed ***All debug lines can be deleted once you understand the code and you have it working, we like tidy code ;)***
 //const int greenPin = 12; //Debug LED function not needed
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght) {
